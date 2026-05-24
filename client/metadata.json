@@ -1,0 +1,6 @@
+{
+  "name": "InstaLink Egypt",
+  "description": "منصة احترافية متكاملة بأسلوب Linktree مدمج بها بوابة دفع آمنة عبر انستا باي (InstaPay) لإدار روابطك وتلقي مدفوعاتك بأمان عالٍ وتصميم متميز.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
