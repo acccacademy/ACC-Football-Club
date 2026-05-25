@@ -15,8 +15,8 @@ import LucideIcon from './components/LucideIcon';
 import AdminDashboard from './components/AdminDashboard';
 
 // Newly generated high-fidelity asset logos 
-const accLogo = '/src/assets/images/acc_club_logo_1779671916156.png';
-const instapayLogo = '/src/assets/images/instapay_logo_1779671889542.png';
+import accLogo from './assets/images/acc_club_logo_1779671916156.png';
+import instapayLogo from './assets/images/instapay_logo_1779671889542.png';
 
 // Custom initial presets loaded to look EXACTLY like the user's uploaded ACC Football Club mock image
 const INITIAL_PROFILE: ProfileInfo = {
