@@ -23,7 +23,7 @@ const INITIAL_PROFILE: ProfileInfo = {
   name: "ACC Football Club",
   role: "ACC Football Club",
   bio: "الصفحة الرسمية لأكاديمية نادي أسمنت أسيوط الرياضي (فرع الجامعة) • يسعدنا تواصلكم ومتابعتكم لمنصاتنا الرسمية.",
-  avatarUrl: accLogo,
+avatarUrl: 'https://6a1312f6086634e369990ddc.imgix.net/cemex_2026/cemex_2026.webp?auto=format&fit=fill&w=384',
   avatarPreset: "carbon",
   instaPayAddress: "cemex_2026@instapay", // Recipient address
   instaPayEmail: "acccacademy@gmail.com", // Recipient backup email
