@@ -11,6 +11,8 @@ export interface ProfileInfo {
   avatarPreset: string; // 'emerald' | 'gold' | 'sapphire' | 'custom'
   instaPayAddress: string; // Recipient address, e.g. owner@instapay
   instaPayEmail: string; // Recipient backup email
+  contactPhone?: string; // Contact Phone Number
+  contactEmail?: string; // Contact Email Address
 }
 
 export interface LinkItem {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Lock, Save, Plus, Trash2, Eye, Key, Shield,
@@ -62,6 +62,11 @@ export default function AdminDashboard({
   // Edit states
   const [editedProfile, setEditedProfile] = useState<ProfileInfo>({ ...profileInfo });
   const [isAddingLink, setIsAddingLink] = useState(false);
+
+  // Keep in sync with parent props
+  useEffect(() => {
+    setEditedProfile({ ...profileInfo });
+  }, [profileInfo]);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [newLink, setNewLink] = useState<Omit<LinkItem, 'id' | 'clicks'>>({
@@ -284,10 +289,7 @@ export default function AdminDashboard({
               </button>
             </form>
 
-            <div className="border-t border-slate-100 pt-3 flex flex-col items-center justify-center gap-1 text-[10px] text-slate-400 font-mono font-bold">
-              <span>* بيانات الدخول الافتراضية المؤمنة:</span>
-              <span>البريد: <span className="text-slate-600 select-all">acccacademy@gmail.com</span> • كلمة المرور: <span className="text-slate-600 select-all">1234</span></span>
-            </div>
+
           </div>
         ) : (
           /* AUTHENTICATED PANEL */
@@ -408,9 +410,47 @@ export default function AdminDashboard({
                           onChange={(e) => {
                             setEditedProfile({...editedProfile, instaPayEmail: e.target.value});
                           }}
-                          placeholder="acccacademy@gmail.com"
+                          placeholder="example@gmail.com"
                           className="w-full bg-white border border-emerald-200 focus:border-emerald-500 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-mono"
                           required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Direct Contacts configuration */}
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                    <span className="text-[10px] text-slate-500 font-black uppercase tracking-wider flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block"></span>
+                      أرقام التواصل المباشرة (هاتف وبريد) كأيقونات
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Contact Phone */}
+                      <div className="space-y-1">
+                        <label className="text-[11px] text-slate-700 font-bold block">رقم الهاتف للتواصل المباشر</label>
+                        <input
+                          type="tel"
+                          value={editedProfile.contactPhone || ''}
+                          onChange={(e) => {
+                            setEditedProfile({...editedProfile, contactPhone: e.target.value});
+                          }}
+                          placeholder="مثال: +201021464303"
+                          className="w-full bg-white border border-slate-200 focus:border-indigo-500 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-mono"
+                        />
+                      </div>
+
+                      {/* Contact Email */}
+                      <div className="space-y-1">
+                        <label className="text-[11px] text-slate-700 font-bold block">البريد الإلكتروني للرد السريع</label>
+                        <input
+                          type="email"
+                          value={editedProfile.contactEmail || ''}
+                          onChange={(e) => {
+                            setEditedProfile({...editedProfile, contactEmail: e.target.value});
+                          }}
+                          placeholder="example@gmail.com"
+                          className="w-full bg-white border border-slate-200 focus:border-indigo-500 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-mono"
                         />
                       </div>
                     </div>
