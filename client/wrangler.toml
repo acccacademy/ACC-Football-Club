@@ -1,2 +1,5 @@
 name = "acc-football-club"
-pages_build_output_dir = "dist"
+compatibility_date = "2026-05-25"
+
+[assets]
+directory = "./dist"
