@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
+import dataRoutes from './routes/data';
+import { initDB } from './db';
 
 dotenv.config();
 
@@ -48,14 +50,21 @@ app.use((req, _res, next) => {
 
 // Routes
 app.use('/api/auth', loginLimiter, authRoutes);
+app.use('/api/data', dataRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Init DB then start server
+initDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize DB:', err);
+  process.exit(1);
 });
 
 export default app;

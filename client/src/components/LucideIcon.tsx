@@ -7,6 +7,7 @@ import React from 'react';
 import {
   Globe,
   Landmark,
+  PlayCircle,
   DollarSign,
   Shield,
   Settings,
@@ -66,6 +67,7 @@ import {
 const iconsMap: Record<string, React.ComponentType<any>> = {
   globe: Globe,
   landmark: Landmark,
+  playcircle: PlayCircle,
   dollarsign: DollarSign,
   shield: Shield,
   settings: Settings,

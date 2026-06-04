@@ -33,6 +33,16 @@ avatarUrl: 'https://6a1312f6086634e369990ddc.imgix.net/cemex_2026/cemex_2026.web
 
 const INITIAL_LINKS: LinkItem[] = [
   {
+    id: "link_cemexawy",
+    title: "Cemexawy",
+    subtitle: "تطبيق مخصص لأولياء امور لاعبين اكاديمية اسمنت اسيوط لمتابعة اداء ابنائهم",
+    url: "https://play.google.com/store/apps/details?id=com.cemex.app",
+    iconName: "playcircle",
+    clicks: 0,
+    colorPreset: "carbon",
+    isActive: true
+  },
+  {
     id: "link_1",
     title: "Assiut Cement Company FC WhatsApp group",
     subtitle: "المجتمع الرسمي للأكاديمية • مواعيد وتطور التدريبات والأنشطة المشتركة",
@@ -62,16 +72,7 @@ const INITIAL_LINKS: LinkItem[] = [
     colorPreset: "carbon",
     isActive: true
   },
-  {
-    id: "link_gmail",
-    title: "البريد الإلكتروني للأكاديمية (Gmail)",
-    subtitle: "تواصل معنا مباشرة عبر البريد للاستفسارات الرسمية: acccacademy@gmail.com",
-    url: "mailto:acccacademy@gmail.com",
-    iconName: "mail",
-    clicks: 412,
-    colorPreset: "carbon",
-    isActive: true
-  },
+
   {
     id: "link_instapay",
     title: "بوابة دفع واشتراكات الأكاديمية الآمنة - InstaPay",
@@ -98,6 +99,15 @@ const getLinkStyleClasses = (iconName: string, id: string, url: string) => {
     };
   }
   
+  if (normalizedIcon === 'playcircle' || normalizedUrl.includes('play.google.com')) {
+    return {
+      container: 'bg-gradient-to-r from-[#012a14]/90 via-[#01411f]/80 to-[#020d06]/95 border-green-500/30 hover:border-green-400 shadow-[0_0_15px_-3px_rgba(34,197,94,0.22)]',
+      iconBg: 'bg-gradient-to-br from-green-400 to-cyan-500 text-white border-green-400/30',
+      titleColor: 'text-green-100 font-bold',
+      subtitleColor: 'text-green-300/60',
+    };
+  }
+
   if (normalizedIcon === 'messagesquare' || normalizedIcon === 'whatsapp' || normalizedUrl.includes('wa.me') || normalizedUrl.includes('whatsapp')) {
     return {
       container: 'bg-gradient-to-r from-[#012a14]/90 via-[#013519]/80 to-[#020d06]/95 border-emerald-500/30 hover:border-emerald-400 shadow-[0_0_15px_-3px_rgba(16,185,129,0.22)]',
@@ -171,27 +181,36 @@ const getLinkStyleClasses = (iconName: string, id: string, url: string) => {
 
 export default function App() {
   // State initialization with localStorage persistence support and merging defaults
-  const [profile, setProfile] = useState<ProfileInfo>(() => {
-    const saved = localStorage.getItem('instalink_profile');
-    try {
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return {
-          ...INITIAL_PROFILE,
-          ...parsed
-        };
-      }
-    } catch (e) { /* ignore */ }
-    return INITIAL_PROFILE;
-  });
+  const [profile, setProfile] = useState<ProfileInfo>(INITIAL_PROFILE);
+  const [links, setLinks] = useState<LinkItem[]>(INITIAL_LINKS);
+  const [loading, setLoading] = useState(true);
 
-  const [links, setLinks] = useState<LinkItem[]>(() => {
-    const saved = localStorage.getItem('instalink_links');
-    try {
-      if (saved) return JSON.parse(saved);
-    } catch (e) { /* ignore */ }
-    return INITIAL_LINKS;
-  });
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+  // Fetch data from API on load
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profileRes, linksRes] = await Promise.all([
+          fetch(`${API_URL}/api/data/profile`, { credentials: 'include' }),
+          fetch(`${API_URL}/api/data/links`, { credentials: 'include' }),
+        ]);
+        if (profileRes.ok) {
+          const p = await profileRes.json();
+          if (p.success) setProfile(p.data);
+        }
+        if (linksRes.ok) {
+          const l = await linksRes.json();
+          if (l.success) setLinks(l.data);
+        }
+      } catch (e) {
+        // fallback to INITIAL data if API fails
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Admin Panel Control Center toggle trigger
   const [adminOpen, setAdminOpen] = useState(false);
@@ -239,23 +258,46 @@ export default function App() {
   const [shareFeedback, setShareFeedback] = useState(false);
   const [copiedLinkFeedback, setCopiedLinkFeedback] = useState<string | null>(null);
 
-  // Sync up states dynamically to local storage on edits
-  useEffect(() => {
-    localStorage.setItem('instalink_profile', JSON.stringify(profile));
-    setAvatarError(false);
-  }, [profile]);
+  const handleUpdateProfile = async (newProfile: ProfileInfo) => {
+    setProfile(newProfile);
+    try {
+      await fetch(`${API_URL}/api/data/profile`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProfile),
+      });
+    } catch (e) {}
+  };
 
-  useEffect(() => {
-    localStorage.setItem('instalink_links', JSON.stringify(links));
-  }, [links]);
+  const handleUpdateLinks = async (newLinks: LinkItem[]) => {
+    setLinks(newLinks);
+    try {
+      await fetch(`${API_URL}/api/data/links`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newLinks),
+      });
+    } catch (e) {}
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        <div className="animate-pulse text-sm text-neutral-400">جاري التحميل...</div>
+      </div>
+    );
+  }
 
   // Handle standard link clicking and secure redirect
   const handleLinkItemClick = (e: React.MouseEvent, link: LinkItem) => {
-    // Increment click count safely
-    const updated = links.map(item => 
+    const updated = links.map(item =>
       item.id === link.id ? { ...item, clicks: item.clicks + 1 } : item
     );
     setLinks(updated);
+    // Increment click in DB
+    fetch(`${API_URL}/api/data/links/${link.id}/click`, { method: 'POST', credentials: 'include' }).catch(() => {});
   };
 
   const handleCopyProfileAddress = () => {
@@ -540,9 +582,9 @@ export default function App() {
         isOpen={adminOpen || isAdminRoute}
         onClose={handleCloseAdmin}
         profileInfo={profile}
-        onUpdateProfile={setProfile}
+        onUpdateProfile={handleUpdateProfile}
         links={links}
-        onUpdateLinks={setLinks}
+        onUpdateLinks={handleUpdateLinks}
       />
 
     </div>
