@@ -433,17 +433,7 @@ export default function App() {
               </a>
             )}
 
-            {/* Direct Email Contact Icon */}
-            {profile.contactEmail && (
-              <a 
-                href={`mailto:${profile.contactEmail}`}
-                className="w-10 h-10 bg-neutral-900/40 hover:bg-rose-500/10 border border-neutral-800 hover:border-rose-500/40 text-neutral-200 hover:text-rose-400 rounded-full flex items-center justify-center transition-all shadow"
-                title="مراسلة سريعة للمسؤول"
-                id="social-contact-email"
-              >
-                <Mail size={16} />
-              </a>
-            )}
+
 
             <button 
               onClick={handleCopyProfileAddress}
