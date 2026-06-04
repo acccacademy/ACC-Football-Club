@@ -1,5 +1,0 @@
-name = "acc-football-club"
-compatibility_date = "2026-05-25"
-
-[assets]
-directory = "./dist"
